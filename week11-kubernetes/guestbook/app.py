@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, redirect
 
 app = Flask(__name__)
@@ -15,14 +16,16 @@ def guestbook():
 
         return redirect("/")
 
-    html = """
+    title = os.getenv("APP_TITLE", "InhaTC Devops 방명록")
+
+    html = f"""
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>InhaTC DevOps 방명록</title>
+        <title>{title}</title>
     </head>
     <body>
-        <h1>InhaTC DevOps 방명록</h1>
+        <h1>{title}</h1>
         <p>8주차 Kubernetes 실습</p>
 
         <form method="POST">

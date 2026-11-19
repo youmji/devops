@@ -118,3 +118,90 @@ Scaling으로 Pod 수를 확장하고, Rolling Update를 통해
 
 Liveness Probe와 Readiness Probe를 설정하여
 컨테이너 상태를 점검하고 HTTP 200 응답을 확인했다.
+
+## 8. 혼자 해보기 (수업 후 과제)
+
+### 8.1 Secret Base64 디코딩 및 보안 확인
+
+Kubernetes Secret에 저장된 Redis 비밀번호를 Base64 디코딩하여 확인하였다.
+
+실행 명령어:
+
+```bash
+kubectl get secret guestbook-secret -o jsonpath='{.data.REDIS_PASSWORD}' | base64 -d; echo
+```
+
+실행 결과, Secret에 저장된 값을 원래 문자열로 확인할 수 있었다.
+
+![Secret Base64 디코딩](screenshots/devops%20week11%20혼자해보기%201번.png)
+
+**왜 안전하지 않은가?**
+
+Base64는 암호화가 아닌 인코딩 방식이므로 누구나 인코딩된 값을 쉽게 디코딩할 수 있다. 따라서 Base64 자체는 비밀번호를 보호하지 못한다.
+
+Kubernetes Secret을 안전하게 관리하려면 접근 권한을 제한하고, 필요에 따라 저장 데이터 암호화 등의 보안 설정을 적용해야 한다.
+
+실제 비밀번호가 노출되지 않도록 캡처에서는 비밀번호를 가렸다.
+
+### 8.2 ConfigMap 변경 및 화면 확인
+
+ConfigMap의 `APP_TITLE` 값을 변경하여 방명록 제목이 바뀌는지 확인하였다.
+
+변경 명령어:
+
+```bash
+kubectl patch configmap guestbook-config --type merge -p '{"data":{"APP_TITLE":"방명록 (11주차 과제 완료)"}}'
+kubectl rollout restart deployment/guestbook
+```
+
+기존 Flask 코드에는 제목이 고정되어 있어 ConfigMap 변경만으로 화면이 바뀌지 않았다.
+
+이를 해결하기 위해 Flask에서 `APP_TITLE` 환경변수를 읽도록 코드를 수정하고 새로운 Docker 이미지 `v3`를 빌드하여 배포하였다.
+
+이후 ConfigMap에 설정된 제목이 실제 방명록 화면에 표시되는 것을 확인하였다.
+
+![ConfigMap 제목 변경 결과](screenshots/devops%20week11%20혼자해보기%202번.png)
+
+### 8.3 Readiness Probe 실패 확인
+
+Readiness Probe의 정상 경로인 `/readyz`를 존재하지 않는 `/readyz-test-fail`로 임시 변경하였다.
+
+그 결과, 컨테이너는 실행 중이지만 Kubernetes가 요청을 받을 준비가 되지 않았다고 판단하여 `READY 0/1` 상태가 나타났다.
+
+![Readiness Probe 실패](screenshots/devops%20week11%20혼자해보기%203번.png)
+
+실습 후 Readiness Probe 경로를 `/readyz`로 복구하였다.
+
+### 8.4 Liveness Probe 실패 확인
+
+Liveness Probe의 정상 경로인 `/healthz`를 존재하지 않는 `/healthz-test-fail`로 임시 변경하였다.
+
+상태 점검이 반복해서 실패하자 Kubernetes가 Guestbook 컨테이너를 재시작하였고, `RESTARTS`가 0에서 1로 증가하는 것을 확인하였다.
+
+![Liveness Probe 실패](screenshots/devops%20week11%20혼자해보기%203-1번.png)
+
+실습 후 Liveness Probe 경로를 `/healthz`로 복구하였다.
+
+### 8.5 트러블슈팅 3단 루틴
+
+**1단계: 현재 상태 확인**
+
+`kubectl get pods` 명령어로 Pod의 READY, STATUS, RESTARTS 값을 확인한다.
+
+**2단계: 오류 원인 분석**
+
+`kubectl describe pod` 명령어로 이벤트와 상태 점검 실패 원인을 확인하고, 필요한 경우 `kubectl logs`로 애플리케이션 로그를 확인한다.
+
+**3단계: 문제 해결 및 재확인**
+
+잘못된 설정을 수정한 뒤 `kubectl rollout status deployment/guestbook`과 `kubectl get pods`를 실행하여 정상 복구 여부를 확인한다.
+
+### 8.6 최종 결과
+
+- Secret Base64 디코딩 확인 완료
+- ConfigMap 변경 후 방명록 제목 변경 확인
+- Readiness Probe 실패 (`READY 0/1`) 확인
+- Liveness Probe 실패 (`RESTARTS 1`) 확인
+- Readiness 및 Liveness Probe 정상 복구
+- Guestbook Pod 4개 모두 `1/1 Running`
+- Redis Pod `1/1 Running`
