@@ -127,3 +127,60 @@ kubectl get pods
 또한 Replica 수를 변경하여 Pod 개수를 조절하고, GHCR에 업로드한 이미지를 Kubernetes에서 실행하는 과정까지 경험하였다.
 
 마지막으로 Pod가 복구되더라도 메모리에 저장된 데이터는 유지되지 않는다는 점을 확인하였으며, 실제 서비스에서는 데이터베이스나 영구 저장소를 활용해야 한다는 것을 알게 되었다.
+
+## 혼자 해보기
+
+### 1. Kubernetes 노드 상태 확인
+
+사용한 도구: Minikube
+
+실행 결과:
+
+```text
+NAME       STATUS   ROLES           AGE   VERSION
+devops09   Ready    control-plane   14d   v1.37.0
+```
+
+노드가 Ready 상태인 것을 확인하였다.
+
+### 2. Pod 삭제 및 자가 치유 확인
+
+kubectl get pods -w 명령어로 Pod의 상태 변화를 확인하였다.
+
+- 삭제된 Pod: guestbook-9f47d76f8-485sj
+- 새로 생성된 Pod: guestbook-9f47d76f8-v5bkj
+
+새로운 Pod의 상태 변화:
+
+```text
+Pending
+ContainerCreating
+Running
+```
+
+Pod를 삭제해도 Deployment가 새로운 Pod를 생성하여
+설정된 Pod 개수를 유지하는 것을 확인하였다.
+
+### 3. Kubernetes 방명록 실행 화면
+
+![방명록 실행 화면](images/guestbook.png)
+
+Kubernetes에서 방명록 웹사이트가 정상적으로 실행되는 것을 확인하였다.
+
+기존 방명록 버전에는 Pod/Host 표시 기능이 없어
+브라우저 화면에 해당 정보가 표시되지 않는다.
+
+### 4. 선언형이란?
+
+원하는 최종 상태를 지정하면 Kubernetes가 현재 상태를
+확인하고 원하는 상태가 되도록 자동으로 관리하는 방식이다.
+
+### 5. 막혔던 부분과 해결 방법
+
+기존 devops09 Minikube 프로필이 중지되어 있었다.
+
+devops09 프로필을 다시 시작하고 해당 컨텍스트에서
+노드와 Pod의 상태를 확인하여 실습을 진행하였다.
+
+※ 2026년 11월 26일 기존 프로젝트를 기반으로
+9주차 실습 기록을 보완하였다.
