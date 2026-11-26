@@ -18,12 +18,17 @@ Pod의 자동 복구(Self-healing), 확장(Scaling), 로드 밸런싱(Load Balan
 ## 3. 프로젝트 구조
 
 ```text
-week10-kubernetes/
-├── README.md
-└── k8s/
-    ├── deployment.yaml
-    └── service.yaml
+devops/
+├── guestbook/
+│   └── k8s/
+│       ├── deployment.yaml
+│       └── service.yaml
+└── week10/
+    └── README.md
 ```
+
+기존 실습 파일은 guestbook/k8s/로 통합하였다.
+이하 실습 내용은 당시의 실행 기록이다.
 
 ## 4. Deployment 생성
 
