@@ -134,3 +134,85 @@ Docker Compose로 실행한 web 컨테이너 3개 중 하나가 중지되었을 
 - 실행 중인 컨테이너 개수만 확인하므로 웹 서비스가 실제로 정상 응답하는지는 보장할 수 없음.
 - Docker 엔진 자체가 중단되면 이 스크립트만으로 복구할 수 없음.
 - 여러 서버에 분산된 컨테이너를 관리하는 용도로는 한계가 있음.
+
+## 혼자 해보기
+
+### 1. Docker Compose 실행 및 Healthcheck 확인
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+실행 결과:
+
+| 컨테이너 | 상태 | 포트 |
+|---|---|---|
+| guestbook-nginx-1 | Up | 8080:80 |
+| guestbook-redis-1 | Up (healthy) | 6379 |
+| guestbook-web-1 | Up (healthy) | 5000 |
+| guestbook-web-2 | Up (healthy) | 5000 |
+| guestbook-web-3 | Up (healthy) | 5000 |
+
+Redis 연결에 성공하였으며, /readyz 요청에 HTTP 200 응답이 반환되는 것을 확인하였다.
+
+### 2. web 컨테이너 확장 및 호스트명 확인
+
+```bash
+docker compose up -d --scale web=3
+docker compose ps
+docker ps --format "{{.ID}} {{.Names}}"
+```
+
+브라우저에서 localhost:8080에 접속한 후 새로고침하여 서로 다른 web 컨테이너가 응답하는 것을 확인하였다.
+
+| 컨테이너 | 컨테이너 ID | 방문 횟수 |
+|---|---|---|
+| guestbook-web-3 | ecaa8caa3605 | 7회 |
+| guestbook-web-2 | 43e3d51accb8 | 8회 |
+| guestbook-web-1 | 3178afaf5ed7 | 9회 |
+
+![web-3 실행 화면](images/scale-1.png)
+
+![web-2 실행 화면](images/scale-2.png)
+
+![web-1 실행 화면](images/scale-3.png)
+
+새로고침 시 서로 다른 web 컨테이너가 응답하였으며, 하나의 Redis를 공유하므로 방문 횟수가 연속적으로 증가하였다.
+
+### 3. down 후 up과 down -v 후 up 차이 비교
+
+#### down 후 up
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+컨테이너가 재생성되어 호스트명이 변경되었지만 기존 방명록 글 2개가 그대로 유지되었다.
+
+#### down -v 후 up
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+기존 방명록 글 2개가 모두 사라졌으며 방문 횟수가 1회로 초기화되었다.
+
+| 비교 항목 | down 후 up | down -v 후 up |
+|---|---|---|
+| 컨테이너 재생성 | O | O |
+| 기존 볼륨 삭제 | X | O |
+| 기존 데이터 유지 | O | X |
+| 방명록 글 | 2개 유지 | 0개 |
+
+down은 컨테이너와 네트워크를 삭제하지만 기존 데이터 볼륨은 유지한다. down -v는 데이터 볼륨까지 삭제하므로 기존 데이터가 사라진다.
+
+### 4. .env를 Git에 올리지 않는 이유
+
+.env 파일에는 Redis 비밀번호와 같은 민감한 정보가 포함되어 있다. GitHub에 업로드하면 다른 사람에게 비밀번호가 노출될 수 있으므로 .gitignore에 .env를 추가하여 Git 추적 대상에서 제외하였다.
+
+실제 비밀번호 대신 환경 변수의 작성 형식을 알려주는 .env.example 파일만 Git에 포함한다.
+
+※ 2026년 11월 26일 기존 프로젝트를 기반으로 7주차 미완료 실습을 보완하였다.
