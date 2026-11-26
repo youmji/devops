@@ -73,4 +73,4 @@ GitHub Actions를 사용하면 코드 검사, 테스트,
 - 브랜치 보호 확인: PR #21
 
 GitHub Actions:
-https://github.com/youmji/software-development-practice/actions
+https://github.com/youmji/devops/actions

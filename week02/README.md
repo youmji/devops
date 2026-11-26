@@ -51,7 +51,7 @@ git log
 ※ 위 명령어는 ~/devops가 이미 Git 저장소로 초기화된 상태를 전제로 함.
 
 ## 4. GitHub 저장소
-- 저장소: https://github.com/youmji/software-development-practice
+- 저장소: https://github.com/youmji/devops
 - 공개 설정: Public
 
 ## 5. 실습 결과
