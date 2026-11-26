@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/youmji/software-development-practice.git
+    repoURL: https://github.com/youmji/devops.git
     targetRevision: main
     path: guestbook/k8s # YAML 적용
   destination:
