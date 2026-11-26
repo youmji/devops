@@ -7,3 +7,7 @@ __pycache__/
 
 # 운영체제에서 생성되는 불필요한 파일
 *:Zone.Identifier
+week04/backups/
+week04/restore-check/
+week04/backups/
+week04/restore-check/
