@@ -200,6 +200,14 @@ kubectl --context=devops09 get pods -o wide
 
 기존 `deployment.yaml`에는 `replicas: 3`이 설정되어 있으며, 이번 실습에서는 `kubectl scale` 명령어를 통해 실행 중인 Deployment를 5개로 확장하였다.
 
+**Pod 5개 실행 결과 캡처**
+
+![replicas 5 실행 결과](images/replicas-5.png)
+
+Deployment의 READY, UP-TO-DATE, AVAILABLE이 모두 5로 표시되었으며, 방명록 Pod 5개가 모두 1/1 Running 상태인 것을 확인하였다.
+
+※ 2026년 11월 26일 기존 devops09 실습 환경에서 실행 상태를 다시 확인하여 캡처를 보완하였다.
+
 ### 10.3 Pod Hostname 및 Service Load Balancing 확인
 
 먼저 각 Pod의 hostname을 확인하였다.
