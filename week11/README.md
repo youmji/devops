@@ -17,20 +17,27 @@ Liveness Probe, Readiness Probe를 이해하고 직접 적용한다.
 ## 3. 프로젝트 구조
 
 ```text
-week11-kubernetes/
+devops/
+├── .gitignore
 ├── guestbook/
 │   ├── app.py
 │   ├── Dockerfile
-│   └── requirements.txt
-├── k8s/
-│   ├── configmap.yaml
-│   ├── secret.yaml
-│   ├── redis.yaml
-│   └── guestbook.yaml
-├── .gitignore
-└── README.md
-
+│   ├── requirements.txt
+│   └── k8s/
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       ├── configmap.yaml
+│       ├── secret.yaml
+│       ├── secret.yaml.example
+│       └── redis.yaml
+└── week11/
+    ├── README.md
+    └── screenshots/
 ```
+
+기존 실습 파일은 guestbook/으로 통합하였다.
+secret.yaml은 Git 추적에서 제외하였다.
+이하 실습 내용은 당시의 실행 기록이다.
 
 ## 4. 주요 실습 내용
 
