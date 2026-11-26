@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/youmji/guestbook:v1
+          image: ghcr.io/youmji/guestbook:cad0143
           ports:
             - containerPort: 5000
