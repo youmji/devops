@@ -131,3 +131,23 @@ Ubuntu 컨테이너 내부에서 파일을 만든 뒤 중지와 재시작을 진
 파일이 그대로 남아 있는 것도 확인.
 
 이번 실습을 통해 Docker 컨테이너의 기본적인 실행 및 관리 방법을 배움.
+
+## 6. 혼자서 해보기
+
+### curl 실행 결과
+
+```bash
+curl http://localhost:8091
+curl http://localhost:8092
+curl http://localhost:8093
+```
+
+**실행 결과**
+
+```text
+Welcome to nginx1
+Welcome to nginx2
+Welcome to nginx3
+```
+
+각각 다른 포트에서 실행되는 nginx 컨테이너 3개의 index.html을 수정하고, curl을 통해 서로 다른 페이지가 출력되는 것을 확인했다.
